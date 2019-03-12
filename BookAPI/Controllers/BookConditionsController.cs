@@ -12,57 +12,56 @@ namespace BookAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BooksController : ControllerBase
+    public class BookConditionsController : ControllerBase
     {
         private readonly SeboDbContext _context;
 
-        public BooksController(SeboDbContext context)
+        public BookConditionsController(SeboDbContext context)
         {
             _context = context;
         }
 
-
-        // GET: api/Books.{format}
-        [HttpGet("/api/Books.{format}"),FormatFilter]
-        public IEnumerable<Book> GetBook()
+        // GET: api/BookConditions
+        [HttpGet]
+        public IEnumerable<BookCondition> GetBookCondition()
         {
-            return _context.Book;
+            return _context.BookCondition;
         }
 
-        // GET: api/Books/5
+        // GET: api/BookConditions/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetBook([FromRoute] int id)
+        public async Task<IActionResult> GetBookCondition([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var book = await _context.Book.FindAsync(id);
+            var bookCondition = await _context.BookCondition.FindAsync(id);
 
-            if (book == null)
+            if (bookCondition == null)
             {
                 return NotFound();
             }
 
-            return Ok(book);
+            return Ok(bookCondition);
         }
 
-        // PUT: api/Books/5
+        // PUT: api/BookConditions/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook([FromRoute] int id, [FromBody] Book book)
+        public async Task<IActionResult> PutBookCondition([FromRoute] int id, [FromBody] BookCondition bookCondition)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != book.BookId)
+            if (id != bookCondition.BookConditionId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(book).State = EntityState.Modified;
+            _context.Entry(bookCondition).State = EntityState.Modified;
 
             try
             {
@@ -70,7 +69,7 @@ namespace BookAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BookExists(id))
+                if (!BookConditionExists(id))
                 {
                     return NotFound();
                 }
@@ -83,47 +82,45 @@ namespace BookAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Books
+        // POST: api/BookConditions
         [HttpPost]
-        public async Task<IActionResult> PostBook([FromBody] Book book)
+        public async Task<IActionResult> PostBookCondition([FromBody] BookCondition bookCondition)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.Book.Add(book);
+            _context.BookCondition.Add(bookCondition);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBook", new { id = book.BookId }, book);
+            return CreatedAtAction("GetBookCondition", new { id = bookCondition.BookConditionId }, bookCondition);
         }
 
-        // DELETE: api/Books/5
+        // DELETE: api/BookConditions/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBook([FromRoute] int id)
+        public async Task<IActionResult> DeleteBookCondition([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var book = await _context.Book.FindAsync(id);
-            if (book == null)
+            var bookCondition = await _context.BookCondition.FindAsync(id);
+            if (bookCondition == null)
             {
                 return NotFound();
             }
 
-            _context.Book.Remove(book);
+            _context.BookCondition.Remove(bookCondition);
             await _context.SaveChangesAsync();
 
-            return Ok(book);
+            return Ok(bookCondition);
         }
 
-        private bool BookExists(int id)
+        private bool BookConditionExists(int id)
         {
-            return _context.Book.Any(e => e.BookId == id);
+            return _context.BookCondition.Any(e => e.BookConditionId == id);
         }
-
-
     }
 }

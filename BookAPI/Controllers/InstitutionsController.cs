@@ -12,57 +12,56 @@ namespace BookAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BooksController : ControllerBase
+    public class InstitutionsController : ControllerBase
     {
         private readonly SeboDbContext _context;
 
-        public BooksController(SeboDbContext context)
+        public InstitutionsController(SeboDbContext context)
         {
             _context = context;
         }
 
-
-        // GET: api/Books.{format}
-        [HttpGet("/api/Books.{format}"),FormatFilter]
-        public IEnumerable<Book> GetBook()
+        // GET: api/Institutions
+        [HttpGet]
+        public IEnumerable<Institution> GetInstitution()
         {
-            return _context.Book;
+            return _context.Institution;
         }
 
-        // GET: api/Books/5
+        // GET: api/Institutions/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetBook([FromRoute] int id)
+        public async Task<IActionResult> GetInstitution([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var book = await _context.Book.FindAsync(id);
+            var institution = await _context.Institution.FindAsync(id);
 
-            if (book == null)
+            if (institution == null)
             {
                 return NotFound();
             }
 
-            return Ok(book);
+            return Ok(institution);
         }
 
-        // PUT: api/Books/5
+        // PUT: api/Institutions/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook([FromRoute] int id, [FromBody] Book book)
+        public async Task<IActionResult> PutInstitution([FromRoute] int id, [FromBody] Institution institution)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != book.BookId)
+            if (id != institution.InstitutionId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(book).State = EntityState.Modified;
+            _context.Entry(institution).State = EntityState.Modified;
 
             try
             {
@@ -70,7 +69,7 @@ namespace BookAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BookExists(id))
+                if (!InstitutionExists(id))
                 {
                     return NotFound();
                 }
@@ -83,47 +82,45 @@ namespace BookAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Books
+        // POST: api/Institutions
         [HttpPost]
-        public async Task<IActionResult> PostBook([FromBody] Book book)
+        public async Task<IActionResult> PostInstitution([FromBody] Institution institution)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.Book.Add(book);
+            _context.Institution.Add(institution);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBook", new { id = book.BookId }, book);
+            return CreatedAtAction("GetInstitution", new { id = institution.InstitutionId }, institution);
         }
 
-        // DELETE: api/Books/5
+        // DELETE: api/Institutions/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBook([FromRoute] int id)
+        public async Task<IActionResult> DeleteInstitution([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var book = await _context.Book.FindAsync(id);
-            if (book == null)
+            var institution = await _context.Institution.FindAsync(id);
+            if (institution == null)
             {
                 return NotFound();
             }
 
-            _context.Book.Remove(book);
+            _context.Institution.Remove(institution);
             await _context.SaveChangesAsync();
 
-            return Ok(book);
+            return Ok(institution);
         }
 
-        private bool BookExists(int id)
+        private bool InstitutionExists(int id)
         {
-            return _context.Book.Any(e => e.BookId == id);
+            return _context.Institution.Any(e => e.InstitutionId == id);
         }
-
-
     }
 }

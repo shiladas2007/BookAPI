@@ -12,57 +12,56 @@ namespace BookAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BooksController : ControllerBase
+    public class OrdersController : ControllerBase
     {
         private readonly SeboDbContext _context;
 
-        public BooksController(SeboDbContext context)
+        public OrdersController(SeboDbContext context)
         {
             _context = context;
         }
 
-
-        // GET: api/Books.{format}
-        [HttpGet("/api/Books.{format}"),FormatFilter]
-        public IEnumerable<Book> GetBook()
+        // GET: api/Orders
+        [HttpGet]
+        public IEnumerable<Order> GetOrder()
         {
-            return _context.Book;
+            return _context.Order;
         }
 
-        // GET: api/Books/5
+        // GET: api/Orders/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetBook([FromRoute] int id)
+        public async Task<IActionResult> GetOrder([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var book = await _context.Book.FindAsync(id);
+            var order = await _context.Order.FindAsync(id);
 
-            if (book == null)
+            if (order == null)
             {
                 return NotFound();
             }
 
-            return Ok(book);
+            return Ok(order);
         }
 
-        // PUT: api/Books/5
+        // PUT: api/Orders/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook([FromRoute] int id, [FromBody] Book book)
+        public async Task<IActionResult> PutOrder([FromRoute] int id, [FromBody] Order order)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != book.BookId)
+            if (id != order.OrderId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(book).State = EntityState.Modified;
+            _context.Entry(order).State = EntityState.Modified;
 
             try
             {
@@ -70,7 +69,7 @@ namespace BookAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BookExists(id))
+                if (!OrderExists(id))
                 {
                     return NotFound();
                 }
@@ -83,47 +82,45 @@ namespace BookAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Books
+        // POST: api/Orders
         [HttpPost]
-        public async Task<IActionResult> PostBook([FromBody] Book book)
+        public async Task<IActionResult> PostOrder([FromBody] Order order)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.Book.Add(book);
+            _context.Order.Add(order);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBook", new { id = book.BookId }, book);
+            return CreatedAtAction("GetOrder", new { id = order.OrderId }, order);
         }
 
-        // DELETE: api/Books/5
+        // DELETE: api/Orders/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBook([FromRoute] int id)
+        public async Task<IActionResult> DeleteOrder([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var book = await _context.Book.FindAsync(id);
-            if (book == null)
+            var order = await _context.Order.FindAsync(id);
+            if (order == null)
             {
                 return NotFound();
             }
 
-            _context.Book.Remove(book);
+            _context.Order.Remove(order);
             await _context.SaveChangesAsync();
 
-            return Ok(book);
+            return Ok(order);
         }
 
-        private bool BookExists(int id)
+        private bool OrderExists(int id)
         {
-            return _context.Book.Any(e => e.BookId == id);
+            return _context.Order.Any(e => e.OrderId == id);
         }
-
-
     }
 }

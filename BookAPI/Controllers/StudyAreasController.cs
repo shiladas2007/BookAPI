@@ -12,57 +12,56 @@ namespace BookAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BooksController : ControllerBase
+    public class StudyAreasController : ControllerBase
     {
         private readonly SeboDbContext _context;
 
-        public BooksController(SeboDbContext context)
+        public StudyAreasController(SeboDbContext context)
         {
             _context = context;
         }
 
-
-        // GET: api/Books.{format}
-        [HttpGet("/api/Books.{format}"),FormatFilter]
-        public IEnumerable<Book> GetBook()
+        // GET: api/StudyAreas
+        [HttpGet]
+        public IEnumerable<StudyArea> GetStudyArea()
         {
-            return _context.Book;
+            return _context.StudyArea;
         }
 
-        // GET: api/Books/5
+        // GET: api/StudyAreas/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetBook([FromRoute] int id)
+        public async Task<IActionResult> GetStudyArea([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var book = await _context.Book.FindAsync(id);
+            var studyArea = await _context.StudyArea.FindAsync(id);
 
-            if (book == null)
+            if (studyArea == null)
             {
                 return NotFound();
             }
 
-            return Ok(book);
+            return Ok(studyArea);
         }
 
-        // PUT: api/Books/5
+        // PUT: api/StudyAreas/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook([FromRoute] int id, [FromBody] Book book)
+        public async Task<IActionResult> PutStudyArea([FromRoute] int id, [FromBody] StudyArea studyArea)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != book.BookId)
+            if (id != studyArea.StudyAreaId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(book).State = EntityState.Modified;
+            _context.Entry(studyArea).State = EntityState.Modified;
 
             try
             {
@@ -70,7 +69,7 @@ namespace BookAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BookExists(id))
+                if (!StudyAreaExists(id))
                 {
                     return NotFound();
                 }
@@ -83,47 +82,45 @@ namespace BookAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Books
+        // POST: api/StudyAreas
         [HttpPost]
-        public async Task<IActionResult> PostBook([FromBody] Book book)
+        public async Task<IActionResult> PostStudyArea([FromBody] StudyArea studyArea)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.Book.Add(book);
+            _context.StudyArea.Add(studyArea);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBook", new { id = book.BookId }, book);
+            return CreatedAtAction("GetStudyArea", new { id = studyArea.StudyAreaId }, studyArea);
         }
 
-        // DELETE: api/Books/5
+        // DELETE: api/StudyAreas/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBook([FromRoute] int id)
+        public async Task<IActionResult> DeleteStudyArea([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var book = await _context.Book.FindAsync(id);
-            if (book == null)
+            var studyArea = await _context.StudyArea.FindAsync(id);
+            if (studyArea == null)
             {
                 return NotFound();
             }
 
-            _context.Book.Remove(book);
+            _context.StudyArea.Remove(studyArea);
             await _context.SaveChangesAsync();
 
-            return Ok(book);
+            return Ok(studyArea);
         }
 
-        private bool BookExists(int id)
+        private bool StudyAreaExists(int id)
         {
-            return _context.Book.Any(e => e.BookId == id);
+            return _context.StudyArea.Any(e => e.StudyAreaId == id);
         }
-
-
     }
 }

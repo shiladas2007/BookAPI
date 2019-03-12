@@ -12,57 +12,56 @@ namespace BookAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BooksController : ControllerBase
+    public class CoursesController : ControllerBase
     {
         private readonly SeboDbContext _context;
 
-        public BooksController(SeboDbContext context)
+        public CoursesController(SeboDbContext context)
         {
             _context = context;
         }
 
-
-        // GET: api/Books.{format}
-        [HttpGet("/api/Books.{format}"),FormatFilter]
-        public IEnumerable<Book> GetBook()
+        // GET: api/Courses
+        [HttpGet]
+        public IEnumerable<Course> GetCourse()
         {
-            return _context.Book;
+            return _context.Course;
         }
 
-        // GET: api/Books/5
+        // GET: api/Courses/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetBook([FromRoute] int id)
+        public async Task<IActionResult> GetCourse([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var book = await _context.Book.FindAsync(id);
+            var course = await _context.Course.FindAsync(id);
 
-            if (book == null)
+            if (course == null)
             {
                 return NotFound();
             }
 
-            return Ok(book);
+            return Ok(course);
         }
 
-        // PUT: api/Books/5
+        // PUT: api/Courses/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook([FromRoute] int id, [FromBody] Book book)
+        public async Task<IActionResult> PutCourse([FromRoute] int id, [FromBody] Course course)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != book.BookId)
+            if (id != course.CourseId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(book).State = EntityState.Modified;
+            _context.Entry(course).State = EntityState.Modified;
 
             try
             {
@@ -70,7 +69,7 @@ namespace BookAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BookExists(id))
+                if (!CourseExists(id))
                 {
                     return NotFound();
                 }
@@ -83,47 +82,45 @@ namespace BookAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Books
+        // POST: api/Courses
         [HttpPost]
-        public async Task<IActionResult> PostBook([FromBody] Book book)
+        public async Task<IActionResult> PostCourse([FromBody] Course course)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.Book.Add(book);
+            _context.Course.Add(course);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBook", new { id = book.BookId }, book);
+            return CreatedAtAction("GetCourse", new { id = course.CourseId }, course);
         }
 
-        // DELETE: api/Books/5
+        // DELETE: api/Courses/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBook([FromRoute] int id)
+        public async Task<IActionResult> DeleteCourse([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var book = await _context.Book.FindAsync(id);
-            if (book == null)
+            var course = await _context.Course.FindAsync(id);
+            if (course == null)
             {
                 return NotFound();
             }
 
-            _context.Book.Remove(book);
+            _context.Course.Remove(course);
             await _context.SaveChangesAsync();
 
-            return Ok(book);
+            return Ok(course);
         }
 
-        private bool BookExists(int id)
+        private bool CourseExists(int id)
         {
-            return _context.Book.Any(e => e.BookId == id);
+            return _context.Course.Any(e => e.CourseId == id);
         }
-
-
     }
 }

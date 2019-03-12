@@ -12,57 +12,56 @@ namespace BookAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BooksController : ControllerBase
+    public class LocalizationsController : ControllerBase
     {
         private readonly SeboDbContext _context;
 
-        public BooksController(SeboDbContext context)
+        public LocalizationsController(SeboDbContext context)
         {
             _context = context;
         }
 
-
-        // GET: api/Books.{format}
-        [HttpGet("/api/Books.{format}"),FormatFilter]
-        public IEnumerable<Book> GetBook()
+        // GET: api/Localizations
+        [HttpGet]
+        public IEnumerable<Localization> GetLocalization()
         {
-            return _context.Book;
+            return _context.Localization;
         }
 
-        // GET: api/Books/5
+        // GET: api/Localizations/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetBook([FromRoute] int id)
+        public async Task<IActionResult> GetLocalization([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var book = await _context.Book.FindAsync(id);
+            var localization = await _context.Localization.FindAsync(id);
 
-            if (book == null)
+            if (localization == null)
             {
                 return NotFound();
             }
 
-            return Ok(book);
+            return Ok(localization);
         }
 
-        // PUT: api/Books/5
+        // PUT: api/Localizations/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook([FromRoute] int id, [FromBody] Book book)
+        public async Task<IActionResult> PutLocalization([FromRoute] int id, [FromBody] Localization localization)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != book.BookId)
+            if (id != localization.LocalizationId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(book).State = EntityState.Modified;
+            _context.Entry(localization).State = EntityState.Modified;
 
             try
             {
@@ -70,7 +69,7 @@ namespace BookAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BookExists(id))
+                if (!LocalizationExists(id))
                 {
                     return NotFound();
                 }
@@ -83,47 +82,45 @@ namespace BookAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Books
+        // POST: api/Localizations
         [HttpPost]
-        public async Task<IActionResult> PostBook([FromBody] Book book)
+        public async Task<IActionResult> PostLocalization([FromBody] Localization localization)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.Book.Add(book);
+            _context.Localization.Add(localization);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBook", new { id = book.BookId }, book);
+            return CreatedAtAction("GetLocalization", new { id = localization.LocalizationId }, localization);
         }
 
-        // DELETE: api/Books/5
+        // DELETE: api/Localizations/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBook([FromRoute] int id)
+        public async Task<IActionResult> DeleteLocalization([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var book = await _context.Book.FindAsync(id);
-            if (book == null)
+            var localization = await _context.Localization.FindAsync(id);
+            if (localization == null)
             {
                 return NotFound();
             }
 
-            _context.Book.Remove(book);
+            _context.Localization.Remove(localization);
             await _context.SaveChangesAsync();
 
-            return Ok(book);
+            return Ok(localization);
         }
 
-        private bool BookExists(int id)
+        private bool LocalizationExists(int id)
         {
-            return _context.Book.Any(e => e.BookId == id);
+            return _context.Localization.Any(e => e.LocalizationId == id);
         }
-
-
     }
 }
