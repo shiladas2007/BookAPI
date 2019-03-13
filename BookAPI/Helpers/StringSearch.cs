@@ -28,7 +28,7 @@ namespace BookAPI.Services
             }
             return  (from s in _context.Course select s).Where(predicate);
         }
-        public static IQueryable<Book> SearchBook(SeboDbContext _context, string sortOrder, params string[] keywords)
+        public static IQueryable<Book> SearchBook(SeboDbContext _context, string sortOrder= "title_asc", params string[] keywords)
         {
             IQueryable<Book> books = (from b in _context.Book select b);
 
@@ -46,5 +46,12 @@ namespace BookAPI.Services
             books = OrderingBooks.Do(books, sortOrder);
             return books;
         }
+        public static IQueryable<Book> SearchBooks(SeboDbContext _context, params string[] keywords)
+        {
+            string sortOrder = "title_asc";
+            return SearchBook(_context,sortOrder, keywords);
+        }
+
+
     }
 }

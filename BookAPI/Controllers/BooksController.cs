@@ -1,12 +1,13 @@
-﻿using System;
+﻿using BookAPI.Data;
+using BookAPI.Helpers;
+using BookAPI.Models;
+using BookAPI.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using BookAPI.Data;
-using BookAPI.Models;
 
 namespace BookAPI.Controllers
 {
@@ -23,7 +24,7 @@ namespace BookAPI.Controllers
 
 
         // GET: api/Books.{format}
-        [HttpGet("/api/Books.{format}"),FormatFilter]
+        [HttpGet("/api/Books.{format}"), FormatFilter]
         public IEnumerable<Book> GetBook()
         {
             return _context.Book;
@@ -123,7 +124,104 @@ namespace BookAPI.Controllers
         {
             return _context.Book.Any(e => e.BookId == id);
         }
+        
+        [HttpGet("BooksCatalog/{SearchString}")]
+        public IEnumerable BooksCatalog([FromRoute] string SearchString)
+        {
+            SearchString = SearchString.Replace(",", " ");
+            SearchString = SearchString.Replace("_", " ");
+            SearchString = SearchString.Replace("-", " ");
+            SearchString = SearchString.Replace("(", " ");
+            SearchString = SearchString.Replace(")", " ");
+            SearchString = SearchString.Replace("(", " ");
+            SearchString = SearchString.Replace(":", " ");
+            SearchString = SearchString.Replace(";", " ");
+            SearchString = SearchString.Replace("+", " ");
+            SearchString = SearchString.Replace("=", " ");
+            SearchString = SearchString.Replace("/", " ");
+            SearchString = SearchString.Replace("*", " ");
 
+            string[] m = SearchString.Split(".");
+            var users = (from u in _context.User select u).Include(u => u.InstitutionBranch);
+            var UserBranch = (from u in _context.User select u).Include(u => u.InstitutionBranch).Select(u => u.InstitutionBranchId).ToList();
+            int UserBranchId = (int) UserBranch[0];
+
+            // Cheks whether a search string was typed and prepares for search by each word
+            string[] myString = SearchString != null ? m[1].Trim().Split(" ") : new string[0];
+            int MyUser = 0;
+            int.TryParse(m[0], out MyUser);
+
+            if (MyUser == 0)
+            {
+                return null;
+            }
+
+
+            // Get the seach's recordset already sorted
+            var books = StringSearch.SearchBooks(_context, myString)
+                .Include(b => b.BookCondition)
+                .Include(b => b.StudyArea)
+                .Include(b => b.User)
+                .Where(b => !b.Blocked)
+                .Where(b => b.Quantity > b.QuantitySold)
+                .Where(b => b.UserId != MyUser)
+                .Where(b => !b.IsWaitList);
+
+            //Getting the books from the same institution
+            var booksCatalog = (from b in books
+                                join u in users on b.UserId equals u.UserId
+                                select new
+                                {
+                                    b.Blocked,
+                                    b.BookConditionId,
+                                    b.BookId,
+                                    b.CreationDate,
+                                    b.Description,
+                                    b.Edition,
+                                    b.ISBN,
+                                    b.IsWaitList,
+                                    b.PhotoFileName,
+                                    b.Price,
+                                    b.Publisher,
+                                    b.Quantity,
+                                    b.QuantitySold,
+                                    b.StudyAreaId,
+                                    b.Title,
+                                    b.UserId,
+                                    b.Visualizations,
+                                    u.InstitutionBranchId,
+                                }).Where(b => b.InstitutionBranchId == UserBranchId).ToList();
+
+            //var booksCatalogResult = (from b in booksCatalog
+            //                    select new
+            //                    {
+            //                        b.Blocked,
+            //                        b.BookConditionId,
+            //                        b.BookId,
+            //                        b.CreationDate,
+            //                        b.Description,
+            //                        b.Edition,
+            //                        b.ISBN,
+            //                        b.IsWaitList,
+            //                        b.PhotoFileName,
+            //                        b.Price,
+            //                        b.Publisher,
+            //                        b.Quantity,
+            //                        b.QuantitySold,
+            //                        b.StudyAreaId,
+            //                        b.Title,
+            //                        b.UserId,
+            //                        b.Visualizations,
+            //                    }).ToList();
+
+
+
+            // Applying filters on the table
+            //if (StudyAreaFilter != 0) booksCatalog = booksCatalog.Where(b => b.StudyAreaId == StudyAreaFilter);
+            //if (BookConditionFilter != 0) booksCatalog = booksCatalog.Where(b => b.BookConditionId == BookConditionFilter);
+
+            return booksCatalog;
+        }
 
     }
 }
