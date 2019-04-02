@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BookAPI.Data;
 using BookAPI.Models;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace BookAPI.Controllers
 {
@@ -96,7 +98,7 @@ namespace BookAPI.Controllers
 
             return CreatedAtAction("GetUser", new { id = user.UserId }, user);
         }
-
+        
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser([FromRoute] int id)

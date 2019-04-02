@@ -14,7 +14,7 @@ namespace BookAPI
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            CreateWebHostBuilder(args).UseSentry().Build().Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

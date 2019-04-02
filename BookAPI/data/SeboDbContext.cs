@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-
+using BookAPI.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace BookAPI.Data
 {
-    public class SeboDbContext : DbContext
+    public class SeboDbContext : IdentityDbContext<IdentityUser>
     {
         public SeboDbContext(DbContextOptions<SeboDbContext> options)
             : base(options)
@@ -50,6 +51,7 @@ namespace BookAPI.Data
         public DbSet<BookAPI.Models.User> User { get; set; }
         public DbSet<BookAPI.Models.Seller> Seller { get; set; }
         public DbSet<BookAPI.Models.CustomerService> CustomerService { get; set; }
+        public DbSet<BookAPI.Models.UserWithRole> UserWithRole { get; set; }
 
 
     }

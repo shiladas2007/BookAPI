@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Identity;
 
 namespace BookAPI
 {
@@ -31,6 +32,11 @@ namespace BookAPI
             services.AddDbContext<SeboDbContext>(options =>
                options.UseSqlServer(
                    Configuration.GetConnectionString("DefaultConnection")));
+            services.AddIdentity<IdentityUser, IdentityRole>(options => options.Stores.MaxLengthForKeys = 128)
+        .AddEntityFrameworkStores<SeboDbContext>()
+        //.AddTokenProvider(TokenOptions.DefaultProvider, dataProtectionProviderType);
+        .AddDefaultUI()
+        .AddDefaultTokenProviders();
             //services.AddDefaultIdentity<IdentityUser>()
             //    .AddEntityFrameworkStores<SeboDbContext>();
             services.AddMvc(options =>
@@ -60,7 +66,7 @@ namespace BookAPI
             {
                 app.UseHsts();
             }
-
+            app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseMvc();
         }
