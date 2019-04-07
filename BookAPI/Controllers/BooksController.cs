@@ -4,6 +4,8 @@ using BookAPI.Models;
 using BookAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -192,36 +194,67 @@ namespace BookAPI.Controllers
                                     u.InstitutionBranchId,
                                 }).Where(b => b.InstitutionBranchId == UserBranchId).ToList();
 
-            //var booksCatalogResult = (from b in booksCatalog
-            //                    select new
-            //                    {
-            //                        b.Blocked,
-            //                        b.BookConditionId,
-            //                        b.BookId,
-            //                        b.CreationDate,
-            //                        b.Description,
-            //                        b.Edition,
-            //                        b.ISBN,
-            //                        b.IsWaitList,
-            //                        b.PhotoFileName,
-            //                        b.Price,
-            //                        b.Publisher,
-            //                        b.Quantity,
-            //                        b.QuantitySold,
-            //                        b.StudyAreaId,
-            //                        b.Title,
-            //                        b.UserId,
-            //                        b.Visualizations,
-            //                    }).ToList();
+ 
+            return booksCatalog;
+        }
+
+        [HttpGet("ShortBooksCatalog/{SearchString}")]
+        public IEnumerable ShortBooksCatalog([FromRoute] string SearchString)
+        {
+            SearchString = SearchString.Replace(",", " ");
+            SearchString = SearchString.Replace("_", " ");
+            SearchString = SearchString.Replace("-", " ");
+            SearchString = SearchString.Replace("(", " ");
+            SearchString = SearchString.Replace(")", " ");
+            SearchString = SearchString.Replace("(", " ");
+            SearchString = SearchString.Replace(":", " ");
+            SearchString = SearchString.Replace(";", " ");
+            SearchString = SearchString.Replace("+", " ");
+            SearchString = SearchString.Replace("=", " ");
+            SearchString = SearchString.Replace("/", " ");
+            SearchString = SearchString.Replace("*", " ");
+
+            string[] m = SearchString.Split(".");
+            var users = (from u in _context.User select u).Include(u => u.InstitutionBranch);
+            var UserBranch = (from u in _context.User select u).Include(u => u.InstitutionBranch).Select(u => u.InstitutionBranchId).ToList();
+            int UserBranchId = (int)UserBranch[0];
+
+            // Cheks whether a search string was typed and prepares for search by each word
+            string[] myString = SearchString != null ? m[1].Trim().Split(" ") : new string[0];
+            int MyUser = 0;
+            int.TryParse(m[0], out MyUser);
+
+            if (MyUser == 0)
+            {
+                return null;
+            }
 
 
+            // Get the seach's recordset already sorted
+            var books = StringSearch.SearchBooks(_context, myString);
 
-            // Applying filters on the table
-            //if (StudyAreaFilter != 0) booksCatalog = booksCatalog.Where(b => b.StudyAreaId == StudyAreaFilter);
-            //if (BookConditionFilter != 0) booksCatalog = booksCatalog.Where(b => b.BookConditionId == BookConditionFilter);
+            //Getting the books from the same institution
+            var booksCatalog = (from b in books
+                                join u in users on b.UserId equals u.UserId
+                                where b.Blocked == false && u.InstitutionBranchId == UserBranchId
+                                select new
+                                {
+                                    b.BookId,
+                                    b.Title,
+                                    b.Description,
+                                    b.Edition,
+                                    b.ISBN,
+                                    b.Publisher,
+                                    b.Price,
+                                    b.BookCondition,
+                                    b.StudyArea,
+                                    b.User.InstitutionBranch
+                                }); 
+           
 
             return booksCatalog;
         }
+
 
     }
 }

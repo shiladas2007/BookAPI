@@ -65,7 +65,7 @@ namespace BookAPI.Models
         public virtual ICollection<Book> Books { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<Claim> Claims { get; set; }
-        
+        public virtual ICollection<Alert> Alerts { get; set; }
 
 
 
