@@ -94,26 +94,55 @@ namespace BookAPI.Controllers
                     role = "User";
                 else if (_userManager.IsInRoleAsync(user, "Admin").Result)
                     role = "Admin";
+                if(_context.User.Where(a=>a.Email==user.Email).Count()>0)
+                {
+                    var uu = _context.User.Where(a => a.Email == user.Email).FirstOrDefault();
+                    var model = new
+                    {
+                        StatusCode = 200,
+                        result = "success",
+                        message = "profile found",
+                        profile = new
+                        {
+                            uId = user.Id,
+                            uEmail = user.Email,
+                            uPhoneNumber = uu.Phone,
+                            uP=uu.Address,
+                            uCreditcard = uu.Creditcard,
+                            uCreditcardName = uu.CreditcardName,
+                            uFirstName = uu.FirstName,
+                            uMiddleName = uu.MiddleName,
+                            uLastName = uu.LastName,
+                            uUserName = uu.UserName,
+                            Role = role
+                        }
+                    };
+                    // return Ok(result.Succeeded);
+                    // return res;
+                    return Ok(model);
+                }
+                else
+                {
+                    var model = new
+                    {
+                        StatusCode = 200,
+                        result = "success",
+                        message = "profile found",
+                        profile = new
+                        {
+                            uId = user.Id,
+                            uEmail = user.Email,
+                            uPhoneNumber = user.PhoneNumber,
+                            Role = role
+                        }
+                    };
+                    // return Ok(result.Succeeded);
+                    // return res;
+                    return Ok(model);
+                }
                 // JRaw res= (JRaw)("{'result':'success', 'message':'profile found', 'profile':{'uId':'"+user.Id+ "', 'uEmail':'" + user.Email+ "', 'uFirstName':'" + user.first_name
                 //+ "', 'uMiddleName':'" + user.middle_name + "', 'uLastName':'" + user.last_name+ "', 'uPhoneNumber':'" + user.PhoneNumber + "', 'Role':'" + role+ "' } }");
-                var model = new
-                {
-                    StatusCode = 200,
-                    result = "success",
-                    message = "profile found",
-                    profile = new
-                    {
-                        uId = user.Id,
-                        uEmail = user.Email
-                   
-                        ,
-                        uPhoneNumber = user.PhoneNumber,
-                        Role = role
-                    }
-                };
-                // return Ok(result.Succeeded);
-                // return res;
-                return Ok(model);
+               
             }
         }
         /// <summary>
@@ -145,7 +174,7 @@ namespace BookAPI.Controllers
               
                 PhoneNumber = userRole.uPhoneNumber
             };
-
+               //userRole.user
             IdentityResult userCreationResult = null;
             try
             {
@@ -153,8 +182,8 @@ namespace BookAPI.Controllers
               //  var token = await _userManager.GenerateChangePhoneNumberTokenAsync(newUser, newUser.PhoneNumber);
                // await _userManager.ChangePhoneNumberAsync(newUser, userRole.uPhoneNumber,token);
                 if (userCreationResult.Succeeded)
-                {
-                  //  await _userManager.AddToRoleAsync(newUser, "User");
+                {                   
+                    //  await _userManager.AddToRoleAsync(newUser, "User");
                     await _signInManager.SignInAsync(newUser, isPersistent: false);
                 }
                 else
@@ -188,6 +217,35 @@ namespace BookAPI.Controllers
             };
             return CreatedAtAction("GetUserWithRole", new { id = userRole.uId }, model);
         }
+
+
+        /*[HttpPost("UpdateProfile")]
+        public async Task<IActionResult> UpdateProfile([FromBody] User user)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                _context.User.Add(user);
+                var result = await _context.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+
+            }
+            var model = new
+            {
+                StatusCode = 201,
+                result = "success",
+                message = "User has been saved successfully.",
+                profile = user
+            };
+            return CreatedAtAction("GetUser","Users", new { id = user.UserId }, model);
+
+           
+        }*/
         // GET: api/UserWithRoles/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserWithRole([FromRoute] string id)

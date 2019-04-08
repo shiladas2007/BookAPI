@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BookAPI.Data;
 using BookAPI.Models;
+using Newtonsoft.Json.Linq;
 
 namespace BookAPI.Controllers
 {
@@ -95,6 +96,22 @@ namespace BookAPI.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetOrder", new { id = order.OrderId }, order);
+        }
+        //Format {"'SellerId':'a@anu.com','userId':''"}
+        // POST: api/Orders
+        [HttpPost("BuyIt")]
+        public async Task<IActionResult> BuyIt([FromBody]Order order)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _context.Order.Add(order);
+            await _context.SaveChangesAsync();
+
+              return CreatedAtAction("GetOrder", new { id = order.OrderId }, order);
+            return null;
         }
 
         // DELETE: api/Orders/5

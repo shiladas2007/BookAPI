@@ -83,7 +83,34 @@ namespace BookAPI.Controllers
 
             return NoContent();
         }
+        [HttpPost("UpdateProfile")]
+        public async Task<IActionResult> UpdateProfile([FromBody] User user)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
+            try
+            {
+                _context.User.Add(user);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            var model = new
+            {
+                StatusCode = 201,
+                result = "success",
+                message = "User has been saved successfully.",
+                profile = user
+            };
+            return CreatedAtAction("GetUser", new { id = user.UserId }, model);
+
+
+        }
         // POST: api/Users
         [HttpPost]
         public async Task<IActionResult> PostUser([FromBody] User user)

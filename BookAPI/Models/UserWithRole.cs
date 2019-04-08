@@ -14,5 +14,6 @@ namespace BookAPI.Models
         public string Password { get; set; }      
         public string uPhoneNumber { get; set; }
         public string Role { get; set; }
+       // public virtual User user { get; set; }
     }
 }
