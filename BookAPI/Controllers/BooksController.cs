@@ -246,9 +246,9 @@ namespace BookAPI.Controllers
                                     b.ISBN,
                                     b.Publisher,
                                     b.Price,
-                                    b.BookCondition,
-                                    b.StudyArea,
-                                    b.User.InstitutionBranch
+                                    b.BookCondition.Condition,
+                                    b.StudyArea.StudyAreaName,
+                                    b.User.InstitutionBranch.InstitutionBranchName
                                 }); 
            
 

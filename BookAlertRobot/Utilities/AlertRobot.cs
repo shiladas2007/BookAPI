@@ -52,6 +52,7 @@ namespace BookAlertRobot.Utilities
                     }
                     else
                     {
+                        searchString.Append(" " + alert.StringSearch);
                         if (searchString.Length > 1)
                         {
                             // triggers the search engine

@@ -25,7 +25,9 @@ namespace BookAlertRobot.Utilities
                 Message += "\nTitle :" + booksFromCatalog[i].Title;
                 Message += "\nDescription:" + booksFromCatalog[i].Description;
                 Message += "\nEdition:" + booksFromCatalog[i].Edition;
-                Message += "\nSeller Local:" + booksFromCatalog[i].institutionBranch.institutionBranchName;
+                Message += "\nEdition:" + booksFromCatalog[i].StudyAreaName;
+                Message += "\nBook condition:" + booksFromCatalog[i].Condition;
+                Message += "\nSeller Local:" + booksFromCatalog[i].InstitutionBranchName;
                 Message += "\nPrice:" + booksFromCatalog[i].Price;
                 if (i < booksFromCatalog.Count - 1)
                     Message += "\n-----------------------------------------------------------------------------"; ;

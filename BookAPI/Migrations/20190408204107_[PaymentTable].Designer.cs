@@ -4,14 +4,16 @@ using BookAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookAPI.Migrations
 {
     [DbContext(typeof(SeboDbContext))]
-    partial class SeboDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190408204107_[PaymentTable]")]
+    partial class PaymentTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -323,7 +325,8 @@ namespace BookAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Address");
+                    b.Property<string>("Address")
+                        .HasMaxLength(90);
 
                     b.Property<string>("AddressComplement");
 
@@ -333,28 +336,40 @@ namespace BookAPI.Migrations
 
                     b.Property<double>("Creditcard");
 
-                    b.Property<string>("CreditcardName");
+                    b.Property<string>("CreditcardName")
+                        .IsRequired()
+                        .HasMaxLength(22);
 
                     b.Property<string>("Discriminator")
                         .IsRequired();
 
-                    b.Property<string>("Email");
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(150);
 
-                    b.Property<string>("FirstName");
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(30);
 
                     b.Property<int>("InstitutionBranchId");
 
-                    b.Property<string>("LastName");
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(30);
 
                     b.Property<int>("LocalizationId");
 
-                    b.Property<string>("MiddleName");
+                    b.Property<string>("MiddleName")
+                        .HasMaxLength(30);
 
                     b.Property<string>("Number");
 
-                    b.Property<string>("Phone");
+                    b.Property<string>("Phone")
+                        .IsRequired();
 
-                    b.Property<string>("UserName");
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(100);
 
                     b.Property<int>("UserType");
 

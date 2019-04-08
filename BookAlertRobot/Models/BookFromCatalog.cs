@@ -28,37 +28,15 @@ namespace BookAlertRobot.Models
         [JsonProperty("Price")]
         public double Price { get; set; }
 
-        [JsonProperty("bookCondition")]
-        public BookCondition bookCondition;
+        [JsonProperty("Condition")]
+        public string Condition;
 
-        [JsonProperty("StudyArea")]
-        public StudyArea studyArea;
+        [JsonProperty("StudyAreaName")]
+        public string StudyAreaName;
 
-        [JsonProperty("institutionBranch")]
-        public InstitutionBranch institutionBranch;
+        [JsonProperty("InstitutionBranchName")]
+        public string InstitutionBranchName;
 
-        public class BookCondition{            
-            public int bookConditionId;
-            public string condition;
-            public string books;
-            public BookCondition() { }
-        }
-        public class StudyArea
-        {
-            public int StudyAreaId;
-            public string StudyAreaName;
-            public string courses;
-            public string books;
-            public StudyArea() { }
-        }
-        public class InstitutionBranch
-        {
-            public int institutionBranchId;
-            public string institutionBranchName;
-            public int institutionId;
-            public string institution;
-            public string users;
-            public InstitutionBranch() { }
-        }
+
     }
 }
