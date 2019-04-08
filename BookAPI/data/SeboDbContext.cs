@@ -38,6 +38,7 @@ namespace BookAPI.Data
         }
 
 
+        public DbSet<BookAPI.Models.Alert> Alert { get; set; }
         public DbSet<BookAPI.Models.Book> Book { get; set; }
         public DbSet<BookAPI.Models.BookCondition> BookCondition { get; set; }
         public DbSet<BookAPI.Models.Course> Course { get; set; }
